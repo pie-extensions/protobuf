@@ -1,11 +1,11 @@
-# pie-extensions/EXTENSION_NAME
+# pie-extensions/protobuf
 
-PIE-compatible mirror of [UPSTREAM_OWNER/UPSTREAM_REPO](https://github.com/UPSTREAM_OWNER/UPSTREAM_REPO).
+PIE-compatible mirror of [protocolbuffers/protobuf](https://github.com/protocolbuffers/protobuf).
 
 ## Install
 
 ```bash
-pie install pie-extensions/EXTENSION_NAME
+pie install pie-extensions/protobuf
 ```
 
 ## What is this?
@@ -16,10 +16,14 @@ Releases are synced automatically from the upstream repository. Each release con
 
 ## Links
 
-- **Upstream:** https://github.com/UPSTREAM_OWNER/UPSTREAM_REPO
+- **Upstream:** https://github.com/protocolbuffers/protobuf
 - **PIE:** https://github.com/php/pie
 - **Organization:** https://github.com/pie-extensions
 
 ## License
 
 This mirror inherits the license of the upstream project. See the upstream repository for license details.
+
+## Issues & Questions
+
+This is an automated mirror repository. Please report all issues and direct questions to the [pie-extensions/core](https://github.com/pie-extensions/core) repository.
