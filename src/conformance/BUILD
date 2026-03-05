@@ -7,29 +7,26 @@
 
 # Protobuf conformance tests.
 
-load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
-load("@rules_cc//cc:defs.bzl", "cc_binary", "objc_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "objc_library")
 load("@rules_java//java:defs.bzl", "java_binary")
 load("@rules_python//python:py_binary.bzl", "py_binary")
-load("@rules_ruby//ruby:defs.bzl", "rb_binary")
 load(
     "//:protobuf.bzl",
     "internal_csharp_proto_library",
     "internal_objc_proto_library",
     "internal_php_proto_library",
     "internal_py_proto_library",
-    "internal_ruby_proto_library",
 )
 load("//bazel:cc_proto_library.bzl", "cc_proto_library")
 load("//bazel:java_lite_proto_library.bzl", "java_lite_proto_library")
 load("//bazel:java_proto_library.bzl", "java_proto_library")
 load("//bazel:proto_library.bzl", "proto_library")
 load("//build_defs:internal_shell.bzl", "inline_sh_binary")
-load("//ruby:defs.bzl", "internal_ruby_proto_library")
 
 exports_files([
     "bazel_conformance_test_runner.sh",
+    "conformance.proto",
     "failure_list_cpp.txt",
     "failure_list_csharp.txt",
     "failure_list_java.txt",
@@ -99,6 +96,7 @@ cc_library(
         "@abseil-cpp//absl/status",
         "@abseil-cpp//absl/strings",
         "@abseil-cpp//absl/strings:str_format",
+        "@abseil-cpp//absl/types:optional",
     ],
 )
 
@@ -110,6 +108,7 @@ cc_test(
         "@abseil-cpp//absl/status",
         "@abseil-cpp//absl/status:statusor",
         "@abseil-cpp//absl/strings",
+        "@abseil-cpp//absl/types:optional",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -291,6 +290,7 @@ cc_test(
         "//src/google/protobuf",
         "//src/google/protobuf:test_textproto",
         "//src/google/protobuf/util:differencer",
+        "@abseil-cpp//absl/log:absl_check",
         "@abseil-cpp//absl/strings:string_view",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
@@ -417,15 +417,6 @@ internal_php_proto_library(
     visibility = [
         "//conformance:__pkg__",
         "//php:__pkg__",
-    ],
-)
-
-internal_ruby_proto_library(
-    name = "conformance_ruby_proto",
-    srcs = ["conformance.proto"],
-    visibility = [
-        "//conformance:__pkg__",
-        "//ruby:__pkg__",
     ],
 )
 
@@ -617,22 +608,6 @@ cc_binary(
     tags = ["manual"],
     visibility = ["//objectivec:__subpackages__"],
     deps = [":conformance_objc_lib"],
-)
-
-rb_binary(
-    name = "conformance_ruby",
-    testonly = True,
-    srcs = ["conformance_ruby.rb"],
-    main = "conformance_ruby.rb",
-    visibility = ["//ruby:__subpackages__"],
-    deps = [
-        ":conformance_ruby_proto",
-        "//conformance/test_protos:test_messages_edition2023_ruby_proto",
-        "//conformance/test_protos:test_messages_edition_unstable_ruby_proto",
-        "//ruby:conformance_editions_test_ruby_proto",
-        "//ruby:conformance_test_ruby_proto",
-        "//ruby:protobuf",
-    ],
 )
 
 ################################################################################
