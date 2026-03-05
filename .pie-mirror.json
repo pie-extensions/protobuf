@@ -5,6 +5,13 @@
     },
     "php_ext_name": "protobuf",
     "source_dir": "src/",
+    "hooks": {
+        "post-extract": [
+            "sed -i '/php\\/ext\\/google\\/protobuf\\/third_party\\//d' src/.gitignore",
+            "mkdir src/php/ext/google/protobuf/third_party",
+            "cp -r src/third_party/utf8_range src/php/ext/google/protobuf/third_party/"
+        ]
+    },
     "build": {
         "enabled": true,
         "os": [
