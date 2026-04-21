@@ -2,7 +2,7 @@
     "name": "pie-extensions/protobuf",
     "description": "PIE-compatible mirror of protocolbuffers/protobuf",
     "type": "php-ext",
-    "version": "33.6",
+    "version": "34.0",
     "require": {
         "php": ">=8.2"
     },

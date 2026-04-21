@@ -391,6 +391,7 @@ public class JsonFormatTest {
       assertWithMessage("Exception is expected.").fail();
     } catch (InvalidProtocolBufferException expected) {
       assertThat(expected).hasMessageThat().isEqualTo("Not an uint32 value: 1.5");
+      assertThat(expected).hasCauseThat().isNotNull();
     }
   }
 
@@ -402,50 +403,7 @@ public class JsonFormatTest {
       assertWithMessage("Exception is expected.").fail();
     } catch (InvalidProtocolBufferException expected) {
       assertThat(expected).hasMessageThat().isEqualTo("Not an uint64 value: 1.5");
-    }
-  }
-
-  @Test
-  public void testRejectLargeQuotedExponentInt32() throws IOException {
-    TestAllTypes.Builder builder = TestAllTypes.newBuilder();
-    try {
-      mergeFromJson("{\"optionalInt32\": \"1e536870000\"}", builder);
-      assertWithMessage("Exception is expected.").fail();
-    } catch (InvalidProtocolBufferException expected) {
-      assertThat(expected).hasMessageThat().isEqualTo("Not an int32 value: \"1e536870000\"");
-    }
-  }
-
-  @Test
-  public void testRejectLargeQuotedExponentUnsignedUint32() throws IOException {
-    TestAllTypes.Builder builder = TestAllTypes.newBuilder();
-    try {
-      mergeFromJson("{\"optionalUint32\": \"1e536870000\"}", builder);
-      assertWithMessage("Exception is expected.").fail();
-    } catch (InvalidProtocolBufferException expected) {
-      assertThat(expected).hasMessageThat().isEqualTo("Out of range uint32 value: \"1e536870000\"");
-    }
-  }
-
-  @Test
-  public void testRejectLargeQuotedExponentInt64() throws IOException {
-    TestAllTypes.Builder builder = TestAllTypes.newBuilder();
-    try {
-      mergeFromJson("{\"optionalInt64\": \"1e536870000\"}", builder);
-      assertWithMessage("Exception is expected.").fail();
-    } catch (InvalidProtocolBufferException expected) {
-      assertThat(expected).hasMessageThat().isEqualTo("Not an int64 value: \"1e536870000\"");
-    }
-  }
-
-  @Test
-  public void testRejectLargeQuotedExponentUnsignedUint64() throws IOException {
-    TestAllTypes.Builder builder = TestAllTypes.newBuilder();
-    try {
-      mergeFromJson("{\"optionalUint64\": \"1e536870000\"}", builder);
-      assertWithMessage("Exception is expected.").fail();
-    } catch (InvalidProtocolBufferException expected) {
-      assertThat(expected).hasMessageThat().isEqualTo("Out of range uint64 value: \"1e536870000\"");
+      assertThat(expected).hasCauseThat().isNotNull();
     }
   }
 
@@ -941,7 +899,9 @@ public class JsonFormatTest {
     final String incorrectTimestampString = "{\"seconds\":1800,\"nanos\":0}";
     try {
       TestTimestamp.Builder builder = TestTimestamp.newBuilder();
-      mergeFromJson(String.format("{\"timestamp_value\": %s}", incorrectTimestampString), builder);
+      mergeFromJson(
+          String.format(Locale.ROOT, "{\"timestamp_value\": %s}", incorrectTimestampString),
+          builder);
       assertWithMessage("expected exception").fail();
     } catch (InvalidProtocolBufferException e) {
       // Exception expected.
@@ -966,7 +926,8 @@ public class JsonFormatTest {
     final String incorrectDurationString = "{\"seconds\":10,\"nanos\":500}";
     try {
       TestDuration.Builder builder = TestDuration.newBuilder();
-      mergeFromJson(String.format("{\"duration_value\": %s}", incorrectDurationString), builder);
+      mergeFromJson(
+          String.format(Locale.ROOT, "{\"duration_value\": %s}", incorrectDurationString), builder);
       assertWithMessage("expected exception").fail();
     } catch (InvalidProtocolBufferException e) {
       // Exception expected.
@@ -986,6 +947,18 @@ public class JsonFormatTest {
 
     assertThat(toJsonString(message))
         .isEqualTo("{\n" + "  \"fieldMaskValue\": \"foo.bar,baz,fooBar.baz\"\n" + "}");
+    assertRoundTripEquals(message);
+  }
+
+  @Test
+  public void testFieldMaskWithQuote() throws Exception {
+    TestFieldMask message =
+        TestFieldMask.newBuilder()
+            .setFieldMaskValue(FieldMaskUtil.fromString("foo.bar,baz,foo_bar.baz,\""))
+            .build();
+
+    assertThat(toJsonString(message))
+        .isEqualTo("{\n" + "  \"fieldMaskValue\": \"foo.bar,baz,fooBar.baz,\\\"\"\n" + "}");
     assertRoundTripEquals(message);
   }
 
